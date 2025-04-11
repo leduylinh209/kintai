@@ -33,5 +33,5 @@ jobs:
         run: python kintai.py --action checkin
 
       - name: Run Check-out
-        if: ${{ (steps.get_time.outputs.current_time >= '09:00') }}
+        if: ${{ (steps.get_time.outputs.current_time >= '09:00' && steps.get_time.outputs.current_time <= '10:00') }}
         run: python kintai.py --action checkout
