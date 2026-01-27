@@ -2,13 +2,14 @@ name: Auto Clock In & Out (Japan Time)
 
 on:
   schedule:
-    - cron: "30 23 * * *"  # Check-in lúc 08:30 JST (23:30 UTC)
-    - cron: "10 9 * * *"   # Check-out lúc 18:10 JST (09:10 UTC)
-  workflow_dispatch:  # Cho phép chạy thủ công nếu cần
+    - cron: "30 23 * * *"  # 08:30 JST
+    - cron: "10 9 * * *"   # 18:10 JST
+  workflow_dispatch:
 
 jobs:
   check-in-out:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -18,20 +19,15 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install dependencies
-        run: pip install requests jpholiday
-
-      - name: Get current UTC time
-        id: get_time
+      - name: Print current time (UTC + JST)
         run: |
-          current_time=$(date -u +"%H:%M")
-          echo "Current time (UTC): $current_time"
-          echo "::set-output name=current_time::$current_time"
+          echo "🕒 Current UTC: $(date -u)"
+          TZ=Asia/Tokyo date
 
-      - name: Run Check-in
-        if: ${{ (steps.get_time.outputs.current_time >= '23:15' && steps.get_time.outputs.current_time <= '23:45') }}
-        run: python kintai.py --action checkin
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests jpholiday pytz
 
-      - name: Run Check-out
-        if: ${{ (steps.get_time.outputs.current_time >= '09:00' && steps.get_time.outputs.current_time <= '10:00') }}
-        run: python kintai.py --action checkout
+      - name: Run Auto Clock In/Out
+        run: python kintai.py
