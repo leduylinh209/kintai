@@ -34,7 +34,7 @@ def detect_action(now_jst):
 
     # CHECKOUT: 18:00 (1080) – 19:30 (1170)
     if 1090 <= total_minutes <= 1290:
-        return "checkout":
+        return "checkout"
 
     return None
 
